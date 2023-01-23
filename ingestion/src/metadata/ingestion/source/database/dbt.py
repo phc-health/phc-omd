@@ -198,10 +198,15 @@ class DbtSource(DbtServiceSource):  # pylint: disable=too-many-public-methods
                         f"Error validating DBT Node: {key}\n"
                         f"Please check if following keys exist for the node: {required_manifest_keys}"
                     )
+                    continue
 
                 # Validate the catalog file if it is passed
                 if dbt_files.dbt_catalog:
                     catalog_node = catalog_entities.get(key)
+                    if not catalog_node:
+                        logger.warning(f"Catalog node {key} was missing")
+                        continue
+
                     for catalog_key, catalog_column in catalog_node.get(
                         "columns"
                     ).items():
